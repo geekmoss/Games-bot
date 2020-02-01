@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  bot:
+    container_name: "Games_Bot"
+    working_dir: "/bot"
+    build: .
+    volumes:
+      - '.:/bot'
