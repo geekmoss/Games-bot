@@ -2,6 +2,7 @@ from discord.ext.commands import Bot, Cog, command, Context
 from Cogs.BaseCog import BaseCog
 from db import Lobby, LobbyList
 from typing import Union
+import peewee
 import discord
 
 
@@ -99,8 +100,15 @@ class Lobbies(BaseCog):
 
         name = name.replace(" ", "_")
 
-        l: Lobby = Lobby.create(name=name, subject=subject, author=ctx.author.display_name,
-                                author_mention=ctx.author.mention, server=ctx.guild.id)
+        try:
+            l: Lobby = Lobby.create(name=name, subject=subject, author=ctx.author.display_name,
+                                    author_mention=ctx.author.mention, server=ctx.guild.id)
+        except peewee.IntegrityError as e:
+            if e.args[0] == "UNIQUE constraint failed: lobby.name, lobby.server":
+                await self.generic_error(ctx, "Vybraný název již existuje, zvolte prosím jiný.")
+                return
+
+            raise
 
         LobbyList.create(lobby=l.id, user=ctx.author.display_name, user_mention=ctx.author.mention)
         await ctx.send(embed=discord.Embed(
