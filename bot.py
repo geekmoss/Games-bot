@@ -9,7 +9,7 @@ import os
 load_dotenv()
 
 token = os.getenv("DISCORD_TOKEN")
-owner = os.getenv("DISCORD_OWNER_USERID")
+owner = int(os.getenv("DISCORD_OWNER_USERID"))
 
 bot = commands.Bot(command_prefix="$")
 

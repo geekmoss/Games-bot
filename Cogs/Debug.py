@@ -4,7 +4,7 @@ import os
 
 
 def is_owner(ctx):
-    owner = os.getenv("DISCORD_OWNER_USERID", 0)
+    owner = int(os.getenv("DISCORD_OWNER_USERID", 0))
     return ctx.author.id == owner
 
 
