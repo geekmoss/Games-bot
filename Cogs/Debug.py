@@ -1,9 +1,11 @@
 from discord.ext.commands import command, check
 from Cogs.BaseCog import BaseCog
+import os
 
 
 def is_owner(ctx):
-    return ctx.author.id == 391594518765502464
+    owner = os.getenv("DISCORD_OWNER_USERID", 0)
+    return ctx.author.id == owner
 
 
 class Debug(BaseCog):

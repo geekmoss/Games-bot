@@ -9,6 +9,7 @@ import os
 load_dotenv()
 
 token = os.getenv("DISCORD_TOKEN")
+owner = os.getenv("DISCORD_OWNER_USERID")
 
 bot = commands.Bot(command_prefix="$")
 
@@ -52,8 +53,8 @@ async def on_command_error(context: commands.Context, exception):
 bot.loop.add_signal_handler(signal.SIGINT, stop)
 bot.loop.add_signal_handler(signal.SIGTERM, stop)
 
-bot.add_cog(Debug(bot))
-bot.add_cog(Lobbies(bot))
+bot.add_cog(Debug(bot, owner))
+bot.add_cog(Lobbies(bot, owner))
 
 check_db()
 bot.run(token)

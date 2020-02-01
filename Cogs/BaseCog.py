@@ -3,8 +3,9 @@ from discord import Embed
 
 
 class BaseCog(Cog):
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot, owner: int):
         self.bot: Bot = bot
+        self.owner = owner
 
     async def generic_error(self, ctx: Context, problem: str = ""):
         await ctx.send(embed=Embed(

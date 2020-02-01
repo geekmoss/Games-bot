@@ -41,7 +41,7 @@ class Lobbies(BaseCog):
             await self.generic_error(ctx, "Lobby nebylo nalezeno, zkontrolujte příkaz a jeho argumenty.")
             return
 
-        p = LobbyList.get_or_none(LobbyList.user == ctx.author.mention)
+        p = LobbyList.get_or_none(LobbyList.user_mention == ctx.author.mention)
         if p:
             await ctx.send(embed=discord.Embed(
                 title="Info",
@@ -130,7 +130,7 @@ class Lobbies(BaseCog):
             await self.generic_error(ctx, "Lobby nebylo nalezeno.")
             return
 
-        if l.author_mention != ctx.author.mention:
+        if l.author_mention != ctx.author.mention and ctx.author.id != self.owner:
             await self.generic_error(ctx, "Lobby může smazat pouze vlastník.")
             return
 
@@ -200,7 +200,7 @@ class Lobbies(BaseCog):
             return
 
         users = list(LobbyList.select().where(LobbyList.lobby == l.id).execute())
-        users_desc = "\n".join(map(lambda x: f"- {x.user}, připojil se{x.joined:%Y-%m-%d %H:%M}", users))
+        users_desc = "\n".join(map(lambda x: f"- {x.user}, připojil se {x.joined:%Y-%m-%d %H:%M}", users))
 
         await ctx.send(embed=discord.Embed(
             title=l.name,
@@ -211,4 +211,71 @@ class Lobbies(BaseCog):
                         f"**Členové** ({len(users)}): \n{users_desc}"
         ))
         return
+
+    @command()
+    async def update(self, ctx: Context, lobby: str, key: str, value: str):
+        """Provede úpravu existujícího lobby. Umožňuje změnit jméno (name) či její předmět (subject).
+
+        $update NAME KEY VALUE
+
+        $update NašeSuperLobby name JeštěSuprovějšíLobby
+        $update NašeSuperLobby subject \"Nový popis našeho suprového lobby.\""""
+
+        l: Lobby = Lobby.get_or_none((Lobby.name == lobby) & (Lobby.server == ctx.guild.id))
+
+        if not l:
+            await self.generic_error(ctx, "Lobby nebylo nalezeno.")
+            return
+
+        if l.author_mention != ctx.author.mention and ctx.author.id != self.owner:
+            await self.generic_error(ctx, "Lobby může upravit pouze vlastník.")
+            return
+
+        if key.lower() == "name":
+            l.name = value
+
+            try:
+                l.save()
+            except peewee.IntegrityError as e:
+                if e.args[0] == "UNIQUE constraint failed: lobby.name, lobby.server":
+                    await self.generic_error(ctx, "Vybraný název již existuje, zvolte prosím jiný.")
+                    return
+                raise
+
+            pass
+        elif key.lower() == "subject":
+            l.subject = value
+            l.save()
+            pass
+
+        pass
+
+    @command()
+    async def ownership(self, ctx: Context, lobby: str, user: discord.User):
+        """Předá vlastnictví zadanému uživateli.
+
+        $ownership NAME @USER
+
+        $ownership NašeSuperLobby @Franta"""
+
+        l: Lobby = Lobby.get_or_none((Lobby.name == lobby) & (Lobby.server == ctx.guild.id))
+
+        if not l:
+            await self.generic_error(ctx, "Lobby nebylo nalezeno.")
+            return
+
+        if l.author_mention != ctx.author.mention and ctx.author.id != self.owner:
+            await self.generic_error(ctx, "Lobby může předat pouze vlastník.")
+            return
+
+        l.author = user.display_name
+        l.author_mention = user.mention
+        l.save()
+
+        await ctx.send(embed=discord.Embed(
+            title="Info",
+            color=discord.Colour.green(),
+            description="Vlastnictví lobby předáno."
+        ))
+        pass
     pass
