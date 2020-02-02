@@ -41,7 +41,7 @@ class Lobbies(BaseCog):
             await self.generic_error(ctx, "Lobby nebylo nalezeno, zkontrolujte příkaz a jeho argumenty.")
             return
 
-        p = LobbyList.get_or_none(LobbyList.user_mention == ctx.author.mention)
+        p = LobbyList.get_or_none((LobbyList.user_mention == ctx.author.mention) & (LobbyList.lobby.name == l.id))
         if p:
             await ctx.send(embed=discord.Embed(
                 title="Info",
