@@ -8,10 +8,12 @@ import os
 
 load_dotenv()
 
-token = os.getenv("DISCORD_TOKEN")
+is_debug = os.getenv("DEBUG", False)
+token = os.getenv("DISCORD_TOKEN") if not is_debug else is_debug
+
 owner = int(os.getenv("DISCORD_OWNER_USERID"))
 
-bot = commands.Bot(command_prefix="$")
+bot = commands.Bot(command_prefix="$" if not is_debug else "d$")
 
 
 def stop():

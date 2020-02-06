@@ -21,4 +21,10 @@ class Debug(BaseCog):
 
         await self.bot.logout()
         pass
+
+    @command(hidden=True)
+    @check(is_owner)
+    async def test(self, ctx):
+        print(type(ctx.author.mention), ctx.author.mention)
+        pass
     pass

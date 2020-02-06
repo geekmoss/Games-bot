@@ -1,4 +1,5 @@
-from discord.ext.commands import Bot, Cog, command, Context
+from discord.ext.commands import Bot, Cog, command, Context, check
+from misc import is_debug_mode
 from Cogs.BaseCog import BaseCog
 from db import Lobby, LobbyList
 from typing import Union
@@ -8,6 +9,7 @@ import discord
 
 class Lobbies(BaseCog):
     @command(name="list", aliases=("l",))
+    @check(is_debug_mode)
     async def lst(self, ctx: Context):
         """Vypíše seznam lobby.
 
@@ -29,6 +31,7 @@ class Lobbies(BaseCog):
         pass
 
     @command(name="join", aliases=("j",))
+    @check(is_debug_mode)
     async def join(self, ctx: Context, lobby: str):
         """Připojíte se k vybranému lobby.
 
@@ -41,7 +44,7 @@ class Lobbies(BaseCog):
             await self.generic_error(ctx, "Lobby nebylo nalezeno, zkontrolujte příkaz a jeho argumenty.")
             return
 
-        p = LobbyList.get_or_none((LobbyList.user_mention == ctx.author.mention) & (LobbyList.lobby.name == l.id))
+        p = LobbyList.get_or_none((LobbyList.user_mention == ctx.author.mention) & (LobbyList.lobby == l.id))
         if p:
             await ctx.send(embed=discord.Embed(
                 title="Info",
@@ -59,6 +62,7 @@ class Lobbies(BaseCog):
         pass
 
     @command()
+    @check(is_debug_mode)
     async def leave(self, ctx: Context, lobby: str):
         """Příkaz pro opuštění lobby.
 
@@ -91,6 +95,7 @@ class Lobbies(BaseCog):
         pass
 
     @command()
+    @check(is_debug_mode)
     async def create(self, ctx: Context, name: str, subject: str):
         """Vytváří nové lobby.
 
@@ -119,6 +124,7 @@ class Lobbies(BaseCog):
         pass
 
     @command()
+    @check(is_debug_mode)
     async def delete(self, ctx: Context, lobby: str):
         """Maže vybrané lobby.
 
@@ -143,6 +149,7 @@ class Lobbies(BaseCog):
         pass
 
     @command(aliases=("m",))
+    @check(is_debug_mode)
     async def mention(self, ctx: Context, lobby: str, msg: str = None):
         """Označí a svolá všechny, kteří jsou členy vybraného lobby.
 
@@ -186,6 +193,7 @@ class Lobbies(BaseCog):
         pass
 
     @command()
+    @check(is_debug_mode)
     async def lobby(self, ctx: Context, lobby: str):
         """Zobrazí detail vybraného lobby.
 
@@ -213,6 +221,7 @@ class Lobbies(BaseCog):
         return
 
     @command()
+    @check(is_debug_mode)
     async def update(self, ctx: Context, lobby: str, key: str, value: str):
         """Provede úpravu existujícího lobby. Umožňuje změnit jméno (name) či její předmět (subject).
 
@@ -251,6 +260,7 @@ class Lobbies(BaseCog):
         pass
 
     @command()
+    @check(is_debug_mode)
     async def ownership(self, ctx: Context, lobby: str, user: discord.User):
         """Předá vlastnictví zadanému uživateli.
 
