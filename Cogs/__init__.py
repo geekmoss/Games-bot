@@ -3,3 +3,5 @@
 # from .Misc import Misc
 from .Debug import Debug
 from .Lobbies import Lobbies
+from .Covid19 import Covid19
+
