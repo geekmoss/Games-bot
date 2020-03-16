@@ -25,6 +25,7 @@ def infected(data) -> io.BytesIO:
 
     chart_io = io.BytesIO()
     p.get_figure().savefig(chart_io, format='png')
+    plt.cla()
     chart_io.seek(0)
     return chart_io
 
@@ -41,5 +42,6 @@ def infected_log(data) -> io.BytesIO:
 
     chart_io = io.BytesIO()
     p.get_figure().savefig(chart_io, format='png')
+    plt.cla()
     chart_io.seek(0)
     return chart_io
