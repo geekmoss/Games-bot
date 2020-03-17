@@ -27,8 +27,9 @@ class Covid19(BaseCog):
         await ctx.send(embed=Embed(
             title="COVID-19: Aktuální situace v ČR",
             color=Colour.dark_green(),
-            description=f"**Počet nakažených:** `{d.get('infected', '???')}`\n"
-                        f"**Počet testovaných:** `{d.get('totalTested', '???')}`\n"
+            description=f"**Nakažených:** `{d.get('infected', '???')}`\n"
+                        f"**Testovaných:** `{d.get('totalTested', '???')}`\n"
+                        f"**Uzdravených:** `{d.get('recovered', '???')}`\n"
                         f"*Aktualizováno {d.get('lastUpdatedAtSource', '???')}*"
         ))
         pass
