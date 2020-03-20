@@ -6,7 +6,8 @@ from requests import get
 
 
 class Covid19(BaseCog):
-    def __api_call(self) -> dict:
+    @staticmethod
+    def __api_call() -> dict:
         r = get("https://api.apify.com/v2/key-value-stores/K373S4uCFR9W1K8ei/records/LATEST?disableRedirect=true")
         if r.status_code != 200:
             return None
@@ -45,7 +46,7 @@ class Covid19(BaseCog):
             await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
             return
 
-        await ctx.send(file=File(Covid.infected(d), "corona_cr_timeline.png"))
+        await ctx.send(file=File(Covid.infected(d), "corona_cze_timeline.png"))
         pass
 
     @command()
@@ -59,6 +60,63 @@ class Covid19(BaseCog):
             await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
             return
 
-        await ctx.send(file=File(Covid.infected_log(d), "corona_cr_timeline_yaxis_log.png"))
+        await ctx.send(file=File(Covid.infected_log(d), "corona_cze_timeline_yaxis_log.png"))
         pass
+
+    @command()
+    async def corona_regions(self, ctx: Context):
+        """Počet nakažených dle krajů"""
+
+        await ctx.trigger_typing()
+        d = self.__api_call()
+
+        if not d:
+            await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
+            return
+
+        await ctx.send(file=File(Covid.by_region(d), "corona_cze_by_region.png"))
+        pass
+
+    @command()
+    async def corona_quarantine_by_regions(self, ctx: Context):
+        """Počet karantén dle krajů"""
+
+        await ctx.trigger_typing()
+        d = self.__api_call()
+
+        if not d:
+            await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
+            return
+
+        await ctx.send(file=File(Covid.quarantine_by_regions(d), "corona_cze_quarantine_by_region.png"),
+                       content=f"Údaj k {d['regionQuarantine'][-1]['reportDate']}")
+        pass
+
+    @command()
+    async def corona_demography(self, ctx: Context):
+        """Nakažení podle demografie"""
+
+        await ctx.trigger_typing()
+        d = self.__api_call()
+
+        if not d:
+            await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
+            return
+
+        await ctx.send(file=File(Covid.demography(d), "corona_cze_demography.png"))
+        pass
+
+    @command()
+    async def corona_models(self, ctx: Context, peak_day: int = 0):
+        """ Predikce na základě logistické, možnost specifickovat den kdy bude nejvyšší peak. (Kolikátý den od 1. 1. 2020)
+
+         Vytvořeno na základě: https://github.com/creative-connections/Bodylight-notebooks/blob/master/Covid-19/Covid-19InItalyAndCzechia.ipynb"""
+
+        await ctx.trigger_typing()
+        d = self.__api_call()
+        if not d:
+            await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
+            return
+
+        await ctx.send(file=File(Covid.prediction(d, peak_day), "corona_cze_predictions_model.png)"))
     pass
