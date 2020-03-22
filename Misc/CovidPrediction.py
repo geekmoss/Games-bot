@@ -13,25 +13,14 @@ def exponential_model(x, a, b, c): return a * np.exp(b * (x - c))
 
 
 def fit_logistic_model(x, y):
-    fit = [[4, 75, 100000]]
-    try:
-        fit = curve_fit(logistic_model, x, y, p0=[2, 70, 20000], method='lm', maxfev=5000)
-        pass
-    except:
-        for i in range(1, 5):
-            try:
-                fit = curve_fit(logistic_model, x, y, p0=[i, 70, i * 1000 ** (i / 3)],
-                                bounds=([0.5, 60, 15], [10, 120, 1e+7]), maxfev=5000)
-                break
-            except:
-                pass
-            pass
-        pass
+    fit = curve_fit(logistic_model, x, y, p0=[2, 70, 20000], maxfev=5000, bounds=([0.5, 30, 300], [10, 120, 7e+6]))
 
-    a, b, c = fit[0][0], fit[0][1], fit[0][2]
+    (a, b, c) = (fit[0][0], fit[0][1], fit[0][2])
+    # lastday when somebody is infected
     lastday = int(fsolve(lambda x: logistic_model(x, a, b, c) - int(c), b))
+
     errors = [np.sqrt(fit[1][i][i]) for i in [0, 1, 2]]
-    return fit, lastday, errors, f"Parameters of logistic model fit a: {a} b: {b} c: {c} errors of c: {errors[2]}"
+    return fit, lastday, errors, f"Parameters of logistic model fit\n - **a**: `{a}`\n - **b**: `{b}`\n - **c**: `{c}`\n - *errors of c:* `{errors[2]}`"
 
 
 def fit_logistic_model_b(x, y, fixb):
@@ -40,7 +29,7 @@ def fit_logistic_model_b(x, y, fixb):
     a, b, c = fit[0][0], fit[0][1], fit[0][2]
     lastday = int(fsolve(lambda x: logistic_model(x, a, b, c) - int(c), b))
     errors = [np.sqrt(fit[1][i][i]) for i in [0, 1, 2]]
-    return fit, lastday, errors, f"Parameters of logistic model fit a: {a} b: {b} c: {c} errors of c: {errors[2]}"
+    return fit, lastday, errors, f"Parameters of logistic model fit\n - **a**: `{a}`\n - **b**: `{b}`\n - **c**: `{c}`\n - *errors of c:* `{errors[2]}`"
 
 
 def fit_exponential_model(x, y):

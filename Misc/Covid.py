@@ -110,4 +110,4 @@ def prediction(data, peak_day):
     df = df.reindex(columns=["day", "infected"])
 
     date_lastday, fit, errors, log_model_txt, log_model_txt_b, chart = cp.analyze_data(df, peak_day)
-    return chart
+    return chart, {"last_date": date_lastday, "log_model_a": log_model_txt, "log_model_b": log_model_txt_b}
