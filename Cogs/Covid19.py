@@ -32,13 +32,14 @@ class Covid19(BaseCog):
             description=f"**Nakažených:** `{d.get('infected', '???')}`\n"
                         f"**Testovaných:** `{d.get('totalTested', '???')}`\n"
                         f"**Uzdravených:** `{d.get('recovered', '???')}`\n"
+                        f"**Zemřelých:** `{d.get('deceased', '???')}`\n"
                         f"*Aktualizováno {d.get('lastUpdatedAtSource', '???')}*"
         ))
         pass
 
     @command()
     async def corona_timeline(self, ctx: Context):
-        """Vývoj počtu infikovaných v ČR."""
+        """Vývoj počtu infikovaných v ČR. Včetně vyjádření přírůstku a logaritmické škály."""
 
         await ctx.trigger_typing()
         d = self.__api_call()
@@ -48,20 +49,6 @@ class Covid19(BaseCog):
             return
 
         await ctx.send(file=File(Covid.infected(d), "corona_cze_timeline.png"))
-        pass
-
-    @command()
-    async def corona_timeline_log(self, ctx: Context):
-        """Vývoj počtu infikovaných v ČR na logaritmické škále."""
-
-        await ctx.trigger_typing()
-        d = self.__api_call()
-
-        if not d:
-            await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
-            return
-
-        await ctx.send(file=File(Covid.infected_log(d), "corona_cze_timeline_yaxis_log.png"))
         pass
 
     @command()
