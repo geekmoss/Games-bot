@@ -15,6 +15,14 @@ class Covid19(BaseCog):
 
         return r.json()
 
+    @staticmethod
+    def __api_call_sk() -> dict:
+        r = get("https://api.apify.com/v2/key-value-stores/GlTLAdXAuOz6bLAIO/records/LATEST?disableRedirect=true")
+        if r.status_code != 200:
+            return None
+
+        return r.json()
+
     @command()
     async def corona(self, ctx: Context):
         """Aktuální situace v ČR."""
@@ -125,5 +133,51 @@ class Covid19(BaseCog):
         else:
             await ctx.send(file=File(Covid.prediction(d, peak_day)[0], "corona_cze_predictions_model.png)"))
             pass
+        pass
+
+    @command()
+    async def corona_testing(self, ctx: Context):
+        """Vyobrazuje testování na Covid19 včetně procentuálního vyjádření nárůstu"""
+        await ctx.trigger_typing()
+        d = self.__api_call()
+
+        if not d:
+            await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
+            return
+
+        await ctx.send(file=File(Covid.testing(d), "corona_cze_testing.png"))
+
+    @command()
+    async def corona_sk(self, ctx: Context):
+        """Přehled o nemoce Covid19 na Slovensku."""
+
+        await ctx.trigger_typing()
+
+        d = self.__api_call_sk()
+        if not d:
+            await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
+            return
+
+        await ctx.send(embed=Embed(
+            title="COVID-19: Aktuální situace v ČR",
+            color=Colour.dark_green(),
+            description=f"**Nakažených:** `{d.get('totalInfected', '???')}`\n"
+                        f"**Negativních testů:** `{d.get('totalNegative', '???')}`\n"
+                        f"*Aktualizováno {d.get('lastUpdatedAtSource', '???')}*"
+        ))
+        pass
+
+    @command()
+    async def corona_sk_timeline(self, ctx: Context):
+        """Časový vývoj nemoce Covid19 na Slovensku."""
+
+        await ctx.trigger_typing()
+
+        d = self.__api_call_sk()
+        if not d:
+            await self.generic_error(ctx, "Něco se nepovedlo. Nejsou dostupná data.")
+            return
+
+        await ctx.send(file=File(Covid.timeline_sk(d), "corona_skv_timeline.png"))
         pass
     pass

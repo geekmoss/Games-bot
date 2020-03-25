@@ -121,3 +121,41 @@ def prediction(data, peak_day):
 
     date_lastday, fit, errors, log_model_txt, log_model_txt_b, chart = cp.analyze_data(df, peak_day)
     return chart, {"last_date": date_lastday, "log_model_a": log_model_txt, "log_model_b": log_model_txt_b}
+
+
+def testing(data):
+    df = pd.DataFrame.from_dict(data["numberOfTestedGraph"])
+    df.date = pd.to_datetime(df.date)
+    df.set_index("date", inplace=True)
+    df = df.rename(columns={'value': 'tested'})
+
+    p = df.plot(figsize=(15, 10))
+    p.grid(color="black", alpha=.5, axis="y", which="both", linewidth=0.5, linestyle="--")
+    # p.set_yscale('log')
+
+    df1b = df.rename(columns={'tested': 'testing growth rate'}).dropna().pct_change().dropna()
+
+    p1b = df1b.plot(ax=p.twinx(), color="tab:green")
+    p1b.tick_params(axis='y', labelcolor="tab:green")
+
+    vals = p1b.get_yticks()
+    p1b.set_yticklabels(['{:.0%}'.format(x) for x in vals])
+
+    lines1, labels1 = p.get_legend_handles_labels()
+    lines2, labels2 = p1b.get_legend_handles_labels()
+
+    p.legend(lines1 + lines2, labels1 + labels2, loc=0)
+    p1b.get_legend().remove()
+
+    return __get_pic(p)
+
+
+def timeline_sk(data):
+    df = pd.DataFrame.from_dict(data["dataByDates"])
+    df.date = pd.to_datetime(df.date)
+    df.set_index("date", inplace=True)
+
+    p = df.plot(figsize=(15, 10))
+    p.grid(color="black", alpha=.5, axis="y", which="both", linewidth=0.5, linestyle="--")
+
+    return __get_pic(p)
