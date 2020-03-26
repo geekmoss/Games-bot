@@ -159,7 +159,7 @@ class Covid19(BaseCog):
             return
 
         await ctx.send(embed=Embed(
-            title="COVID-19: Aktuální situace v ČR",
+            title="COVID-19: Aktuální situace na Slovensku",
             color=Colour.dark_green(),
             description=f"**Nakažených:** `{d.get('totalInfected', '???')}`\n"
                         f"**Negativních testů:** `{d.get('totalNegative', '???')}`\n"
