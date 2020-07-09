@@ -57,7 +57,6 @@ bot.loop.add_signal_handler(signal.SIGTERM, stop)
 
 bot.add_cog(Debug(bot, owner))
 bot.add_cog(Lobbies(bot, owner))
-bot.add_cog(Covid19(bot, owner))
 bot.add_cog(Steam(bot, owner))
 
 check_db()

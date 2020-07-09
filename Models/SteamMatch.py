@@ -43,7 +43,8 @@ class SteamMatch:
     def get_library(self, user: SteamID, include_played_free_games=True, include_appinfo=True):
         try:
             return self._api.call("IPlayerService.GetOwnedGames", steamid=user.as_64, include_appinfo=include_appinfo,
-                                  include_played_free_games=include_played_free_games, appids_filter=[])["response"]
+                                  include_played_free_games=include_played_free_games, appids_filter=[],
+                                  include_free_sub=False)["response"]
         except HTTPError:
             return None
         pass
@@ -57,7 +58,7 @@ class SteamMatch:
             lib = self.get_library(u[0])
             if not lib:
                 counts[u[1]] = 0
-                libs[u[1]] = []
+                libs[u[1]] = set()
                 continue
 
             libs[u[1]] = set()

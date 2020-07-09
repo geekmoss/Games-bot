@@ -1,7 +1,7 @@
 from discord.ext.commands import command, check, Context
 from discord import Colour, Embed
 from Cogs.BaseCog import BaseCog
-from Misc.SteamMatch import SteamMatch, SteamMatchException
+from Models.SteamMatch import SteamMatch, SteamMatchException
 
 
 class Steam(BaseCog):
